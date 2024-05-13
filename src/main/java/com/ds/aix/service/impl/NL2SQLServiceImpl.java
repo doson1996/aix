@@ -145,7 +145,8 @@ public class NL2SQLServiceImpl implements NL2SQLService {
         document.put("parseKey", parseKey);
         mongoDao.saveQuestion(document);
 
-        boolean add = CustomDictionary.add(question, AixConstant.QUESTION_CONFIG);
+        // 实时添加不要带出现频次（例：nt 1），否则会出现匹配不上
+        boolean add = CustomDictionary.add(question, AixConstant.QUESTION);
         return add ? Result.ok("添加成功!") : Result.ok("添加失败!");
     }
 
@@ -173,11 +174,13 @@ public class NL2SQLServiceImpl implements NL2SQLService {
         document.put("abbreviation", abbreviation);
         mongoDao.saveCompany(document);
 
-        boolean add = CustomDictionary.add(company, AixConstant.COMPANY_CONFIG);
+        // 实时添加不要带出现频次（例：nt 1），否则会出现匹配不上
+        boolean add = CustomDictionary.add(company, AixConstant.COMPANY);
         if (add) {
             // 添加公司简称
             for (String jz : abbreviation) {
-                CustomDictionary.add(jz, AixConstant.COMPANY_ABBREVIATION_CONFIG);
+                // 实时添加不要带出现频次（例：nt 1），否则会出现匹配不上
+                CustomDictionary.add(jz, AixConstant.COMPANY_ABBREVIATION);
             }
         }
 
@@ -191,6 +194,7 @@ public class NL2SQLServiceImpl implements NL2SQLService {
             throw new IllegalArgumentException("question不能为空");
         }
         boolean del = mongoDao.delQuestion(question);
+        CustomDictionary.remove(question);
         return del ? Result.ok("删除成功!") : Result.ok("删除失败!");
     }
 
@@ -201,6 +205,7 @@ public class NL2SQLServiceImpl implements NL2SQLService {
             throw new IllegalArgumentException("company不能为空");
         }
         boolean del = mongoDao.delCompany(company);
+        CustomDictionary.remove(company);
         return del ? Result.ok("删除成功!") : Result.ok("删除失败!");
     }
 
