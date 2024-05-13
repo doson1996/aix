@@ -9,11 +9,11 @@ env:
 
 
 #业务配置
-biz:
+aix:
   init-flag: true
   custom-file:
     root: D://haizhi//config//data-for-1.7.5//data//dictionary//custom
-    mongo: ${biz.custom-file.root}//mongo.txt
+    mongo: ${aix.custom-file.root}//mongo.txt
 
 spring:
   application:

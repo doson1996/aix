@@ -1,7 +1,9 @@
 package com.ds.aix.hanlp.corpus.io;
 
+import com.ds.aix.boot.EnvUtils;
+import com.ds.aix.boot.SpringContext;
+import com.ds.aix.common.util.StringUtils;
 import com.ds.aix.dao.MongoDao;
-import com.ds.aix.dao.impl.MongoDaoImpl;
 import com.hankcs.hanlp.corpus.io.FileIOAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
@@ -9,7 +11,6 @@ import org.bson.Document;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -24,7 +25,7 @@ public class CustomIOAdapter extends FileIOAdapter {
 
     }
 
-    private final MongoDao mongoDao = new MongoDaoImpl();
+    private final MongoDao mongoDao = SpringContext.getApplicationContext().getBean(MongoDao.class);
 
     /**
      * 自定义文件路径
@@ -38,15 +39,14 @@ public class CustomIOAdapter extends FileIOAdapter {
 
     static {
         try {
-            InputStream inputStream = ClassLoader.getSystemResourceAsStream("hanlp.properties");
-            Properties properties = new Properties();
-            properties.load(inputStream);
-            String customFile = properties.getProperty("aix.custom-file");
+            String customFile = EnvUtils.getString("aix.custom-file.mongo");
             log.info("customFile = {}", customFile);
-            CUSTOM_FILE = customFile;
+            if (StringUtils.isNotBlank(customFile)) {
+                CUSTOM_FILE = customFile;
+            }
         } catch (Exception e) {
-            log.error("读取hanlp.properties发生异常：", e);
             CUSTOM_FILE = DEFAULT_CUSTOM_FILE;
+            log.error("读取hanlp.properties发生异常：", e);
         }
     }
 
