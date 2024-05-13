@@ -1,6 +1,8 @@
 package com.ds.aix.service;
 
 import com.ds.aix.common.result.Result;
+import com.ds.aix.io.input.AddCompanyInput;
+import com.ds.aix.io.input.AddQuestionInput;
 
 /**
  * @author ds
@@ -17,15 +19,16 @@ public interface NL2SQLService {
     Result<Object> ask(String question);
 
     /**
-     * 添加问题
-     * @param question
+     *  添加问题
+     * @param input 入参
+     * @return
      */
-    void addQuestion(String question);
+    Result<Object> addQuestion(AddQuestionInput input);
 
     /**
      * 添加公司
-     * @param company
+     * @param input 入参
      */
-    void addCompany(String company);
+    Result<Object> addCompany(AddCompanyInput input);
 
 }

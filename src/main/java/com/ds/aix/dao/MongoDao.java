@@ -17,4 +17,16 @@ public interface MongoDao {
      */
     List<Document> queryQuestions();
 
+    /**
+     * 新增公司名
+     * @return
+     */
+    boolean saveCompany(Document company);
+
+    /**
+     * 新增问题
+     * @return
+     */
+    boolean saveQuestion(Document question);
+
 }

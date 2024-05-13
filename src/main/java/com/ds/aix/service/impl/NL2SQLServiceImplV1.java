@@ -4,6 +4,8 @@ import com.ds.aix.common.constant.AixNatureConstant;
 import com.ds.aix.common.result.Result;
 import com.ds.aix.common.util.StringUtils;
 import com.ds.aix.exception.BusinessException;
+import com.ds.aix.io.input.AddCompanyInput;
+import com.ds.aix.io.input.AddQuestionInput;
 import com.ds.aix.service.NL2SQLService;
 import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.corpus.tag.Nature;
@@ -77,13 +79,13 @@ public class NL2SQLServiceImplV1 implements NL2SQLService {
     }
 
     @Override
-    public void addQuestion(String question) {
-
+    public Result<Object> addQuestion(AddQuestionInput input) {
+        return null;
     }
 
     @Override
-    public void addCompany(String compayn) {
-
+    public Result<Object> addCompany(AddCompanyInput input) {
+        return null;
     }
 
     /**

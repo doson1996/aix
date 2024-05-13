@@ -1,0 +1,15 @@
+# swagger
+spring:
+  swagger:
+    enable: true
+    base-package: com.ds
+    description: nas-hc
+    author: dus
+    # 响应状态 code：message
+    response-messages:
+      200: 成功
+      900: 失败
+
+
+
+

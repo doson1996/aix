@@ -21,9 +21,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <fastjson.version>2.0.19</fastjson.version>
         <hanlp.version>portable-1.8.4</hanlp.version>
-        <hutool.version>5.8.11</hutool.version>
+        <hutool.version>5.8.27</hutool.version>
         <lombok.version>1.18.32</lombok.version>
         <mongo.version>3.12.14</mongo.version>
+        <swagger.version>1.0.0-RELEASE</swagger.version>
     </properties>
 
     <dependencies>
@@ -60,6 +61,13 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
+        </dependency>
+
+        <!-- swagger-->
+        <dependency>
+            <groupId>com.ds</groupId>
+            <artifactId>swagger-spring-boot-starter</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
     </dependencies>
 

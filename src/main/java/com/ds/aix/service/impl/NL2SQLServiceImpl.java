@@ -3,7 +3,10 @@ package com.ds.aix.service.impl;
 import com.ds.aix.common.constant.AixNatureConstant;
 import com.ds.aix.common.result.Result;
 import com.ds.aix.common.util.StringUtils;
+import com.ds.aix.dao.MongoDao;
 import com.ds.aix.exception.BusinessException;
+import com.ds.aix.io.input.AddCompanyInput;
+import com.ds.aix.io.input.AddQuestionInput;
 import com.ds.aix.service.NL2SQLService;
 import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.corpus.tag.Nature;
@@ -12,6 +15,7 @@ import com.hankcs.hanlp.seg.common.Term;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +27,9 @@ import java.util.List;
 @Slf4j
 @Service
 public class NL2SQLServiceImpl implements NL2SQLService {
+
+    @Resource
+    private MongoDao mongoDao;
 
     @Override
     public Result<Object> ask(String question) {
@@ -90,16 +97,39 @@ public class NL2SQLServiceImpl implements NL2SQLService {
     }
 
     @Override
-    public void addQuestion(String question) {
-        CustomDictionary.add(question, AixNatureConstant.QUESTION);
+    public Result<Object> addQuestion(AddQuestionInput input) {
+        String question = input.getQuestion();
+        String parseKey = input.getParseKey();
+
+        if (StringUtils.isBlank(question) || StringUtils.isBlank(parseKey)) {
+            throw new IllegalArgumentException("question或parseKey不能为空");
+        }
+
+        if (CustomDictionary.contains(question)) {
+            return Result.ok("当前问题已在问题库中");
+        }
+
+        boolean add = CustomDictionary.add(question, AixNatureConstant.QUESTION);
+        return add ? Result.ok("添加成功!") : Result.ok("添加失败!");
     }
 
     @Override
-    public void addCompany(String company) {
-//        if (CustomDictionary.contains(company)) {
-//            CustomDictionary.remove(company);
-//        }
-        CustomDictionary.add(company, AixNatureConstant.COMPANY);
+    public Result<Object> addCompany(AddCompanyInput input) {
+        // 公司名
+        String company = input.getCompany();
+        // 简称
+        List<String> abbreviation = input.getAbbreviation();
+
+        if (StringUtils.isBlank(company)) {
+            throw new IllegalArgumentException("公司名不能为空");
+        }
+
+        if (CustomDictionary.contains(company)) {
+            return Result.ok("当前公司已在公司库中");
+        }
+
+        boolean add = CustomDictionary.add(company, AixNatureConstant.COMPANY);
+        return add ? Result.ok("添加成功!") : Result.ok("添加失败!");
     }
 
     /**

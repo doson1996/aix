@@ -1,7 +1,11 @@
 package com.ds.aix.controller;
 
 import com.ds.aix.common.result.Result;
+import com.ds.aix.io.input.AddCompanyInput;
+import com.ds.aix.io.input.AddQuestionInput;
 import com.ds.aix.service.NL2SQLService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +17,7 @@ import javax.annotation.Resource;
  * @description
  */
 @Slf4j
+@Api(tags = "NL2SQL能力")
 @RestController
 @RequestMapping("nl2sql")
 public class NL2SQLController {
@@ -20,6 +25,7 @@ public class NL2SQLController {
     @Resource
     private NL2SQLService nl2SqlService;
 
+    @ApiOperation("问答")
     @GetMapping("ask")
     public Result<Object> ask(String question) {
         Result<Object> result = nl2SqlService.ask(question);
@@ -27,16 +33,18 @@ public class NL2SQLController {
         return result;
     }
 
-    @GetMapping("add-question")
-    public Result<Object> addQuestion(String question) {
-        nl2SqlService.addQuestion(question);
-        return Result.ok("添加问题成功!");
+    @ApiOperation("添加问题")
+    @PostMapping("add-question")
+    public Result<Object> addQuestion(@RequestBody AddQuestionInput input) {
+        Result<Object> result = nl2SqlService.addQuestion(input);
+        return result;
     }
 
-    @GetMapping("add-company")
-    public Result<Object> addCompany(String company) {
-        nl2SqlService.addCompany(company);
-        return Result.ok("添加问题成功!");
+    @ApiOperation("添加公司")
+    @PostMapping("add-company")
+    public Result<Object> addCompany(@RequestBody AddCompanyInput input) {
+        Result<Object> result = nl2SqlService.addCompany(input);
+        return result;
     }
 
 }

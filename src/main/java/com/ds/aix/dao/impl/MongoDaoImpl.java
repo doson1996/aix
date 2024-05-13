@@ -38,4 +38,14 @@ public class MongoDaoImpl implements MongoDao {
         return result;
     }
 
+    @Override
+    public boolean saveCompany(Document company) {
+        return false;
+    }
+
+    @Override
+    public boolean saveQuestion(Document question) {
+        return false;
+    }
+
 }
