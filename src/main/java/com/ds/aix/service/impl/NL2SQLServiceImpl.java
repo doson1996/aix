@@ -194,6 +194,7 @@ public class NL2SQLServiceImpl implements NL2SQLService {
             throw new IllegalArgumentException("question不能为空");
         }
         boolean del = mongoDao.delQuestion(question);
+        // todo 不支持删除？
         CustomDictionary.remove(question);
         return del ? Result.ok("删除成功!") : Result.ok("删除失败!");
     }
@@ -205,6 +206,7 @@ public class NL2SQLServiceImpl implements NL2SQLService {
             throw new IllegalArgumentException("company不能为空");
         }
         boolean del = mongoDao.delCompany(company);
+        // todo 不支持删除？
         CustomDictionary.remove(company);
         return del ? Result.ok("删除成功!") : Result.ok("删除失败!");
     }
