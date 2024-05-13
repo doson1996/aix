@@ -90,7 +90,16 @@ public class NL2SQLServiceImpl implements NL2SQLService {
                     || Nature.ntcb.equals(term.nature)) {
                 // 如果没有解析出配置的公司名，使用解析出的机构名
                 if (!configCompanyFlag) {
-                    company = term.word;
+                    // 解析出的机构名
+                    String org = term.word;
+                    // 先使用机构作为简称查询公司名，如果有则使用查询出的公司名
+                    String companyName = mongoDao.qryCompanyName(org);
+                    if (StringUtils.isNotBlank(companyName)) {
+                        company = companyName;
+                    } else {
+                        // todo 查出来的机构名还需处理
+                        company = org;
+                    }
                 }
             }
 
@@ -136,7 +145,7 @@ public class NL2SQLServiceImpl implements NL2SQLService {
         document.put("parseKey", parseKey);
         mongoDao.saveQuestion(document);
 
-        boolean add = CustomDictionary.add(question, AixConstant.QUESTION);
+        boolean add = CustomDictionary.add(question, AixConstant.QUESTION_CONFIG);
         return add ? Result.ok("添加成功!") : Result.ok("添加失败!");
     }
 
@@ -164,7 +173,7 @@ public class NL2SQLServiceImpl implements NL2SQLService {
         document.put("abbreviation", abbreviation);
         mongoDao.saveCompany(document);
 
-        boolean add = CustomDictionary.add(company, AixConstant.COMPANY);
+        boolean add = CustomDictionary.add(company, AixConstant.COMPANY_CONFIG);
         if (add) {
             // 添加公司简称
             for (String jz : abbreviation) {
