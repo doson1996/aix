@@ -84,7 +84,7 @@ public class NL2SQLServiceImpl implements NL2SQLService {
                 questionList.add(term.word);
             }
 
-            // 机构名
+            // 机构名  todo 设置的简称 优先级不如 nt？ 重庆银行？
             if (Nature.nt.equals(term.nature)
                     || Nature.ntc.equals(term.nature)
                     || Nature.ntcb.equals(term.nature)) {
@@ -99,7 +99,7 @@ public class NL2SQLServiceImpl implements NL2SQLService {
 //                ns = term.word;
 //            }
 
-            // todo 【都查一遍？】 如果解析出的公司名不是配置的，并且公司名不以解析出的地名开头，将地名加上
+            // todo 【都查一遍？】 如果解析出的公司名不是配置的，并且公司名不以解析出的地名开头，将地名加上   & 结合 hive？
 //            if (!configCompanyFlag && StringUtils.isNotBlank(company) && !company.startsWith(ns)) {
 //                company = ns + company;
 //            }
@@ -165,6 +165,13 @@ public class NL2SQLServiceImpl implements NL2SQLService {
         mongoDao.saveCompany(document);
 
         boolean add = CustomDictionary.add(company, AixConstant.COMPANY);
+        if (add) {
+            // 添加公司简称
+            for (String jz : abbreviation) {
+                CustomDictionary.add(jz, AixConstant.COMPANY_ABBREVIATION_CONFIG);
+            }
+        }
+
         return add ? Result.ok("添加成功!") : Result.ok("添加失败!");
     }
 
