@@ -6,6 +6,8 @@ import com.ds.aix.common.util.StringUtils;
 import com.ds.aix.exception.BusinessException;
 import com.ds.aix.io.input.AddCompanyInput;
 import com.ds.aix.io.input.AddQuestionInput;
+import com.ds.aix.io.input.DelCompanyInput;
+import com.ds.aix.io.input.DelQuestionInput;
 import com.ds.aix.service.NL2SQLService;
 import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.corpus.tag.Nature;
@@ -84,6 +86,16 @@ public class NL2SQLServiceImplV1 implements NL2SQLService {
 
     @Override
     public Result<Object> addCompany(AddCompanyInput input) {
+        return null;
+    }
+
+    @Override
+    public Result<Object> delQuestion(DelQuestionInput input) {
+        return null;
+    }
+
+    @Override
+    public Result<Object> delCompany(DelCompanyInput input) {
         return null;
     }
 

@@ -7,6 +7,8 @@ import com.ds.aix.dao.MongoDao;
 import com.ds.aix.exception.BusinessException;
 import com.ds.aix.io.input.AddCompanyInput;
 import com.ds.aix.io.input.AddQuestionInput;
+import com.ds.aix.io.input.DelCompanyInput;
+import com.ds.aix.io.input.DelQuestionInput;
 import com.ds.aix.service.NL2SQLService;
 import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.corpus.tag.Nature;
@@ -147,6 +149,26 @@ public class NL2SQLServiceImpl implements NL2SQLService {
 
         boolean add = CustomDictionary.add(company, AixConstant.COMPANY);
         return add ? Result.ok("添加成功!") : Result.ok("添加失败!");
+    }
+
+    @Override
+    public Result<Object> delQuestion(DelQuestionInput input) {
+        String question = input.getQuestion();
+        if (StringUtils.isBlank(question)) {
+            throw new IllegalArgumentException("question不能为空");
+        }
+        boolean del = mongoDao.delQuestion(question);
+        return del ? Result.ok("删除成功!") : Result.ok("删除失败!");
+    }
+
+    @Override
+    public Result<Object> delCompany(DelCompanyInput input) {
+        String company = input.getCompany();
+        if (StringUtils.isBlank(company)) {
+            throw new IllegalArgumentException("company不能为空");
+        }
+        boolean del = mongoDao.delCompany(company);
+        return del ? Result.ok("删除成功!") : Result.ok("删除失败!");
     }
 
     /**

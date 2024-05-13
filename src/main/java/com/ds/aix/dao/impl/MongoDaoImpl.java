@@ -5,9 +5,11 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -38,7 +40,7 @@ public class MongoDaoImpl implements MongoDao {
         } catch (Exception e) {
             log.error("查询问题合集发生异常：", e);
         }
-        
+
         return result;
     }
 
@@ -70,11 +72,31 @@ public class MongoDaoImpl implements MongoDao {
             MongoDatabase ds = client.getDatabase("ds");
             // 选择 collection
             MongoCollection<Document> companyCol = ds.getCollection("nl2sql_company");
+            // 存入之前先删除所有匹配的数据
+            companyCol.deleteMany(Filters.eq("company", company));
             companyCol.insertOne(company);
 
             return true;
         } catch (Exception e) {
             log.error("存入mongo公司库发生异常：", e);
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean delCompany(String company) {
+        try {
+            @Cleanup
+            MongoClient client = new MongoClient("localhost", 27017);
+            MongoDatabase ds = client.getDatabase("ds");
+            // 选择 collection
+            MongoCollection<Document> companyCol = ds.getCollection("nl2sql_company");
+            // 删除所有匹配的数据
+            companyCol.deleteMany(Filters.eq("company", company));
+            return true;
+        } catch (Exception e) {
+            log.error("删除mongo公司库发生异常：", e);
         }
 
         return false;
@@ -87,11 +109,31 @@ public class MongoDaoImpl implements MongoDao {
             MongoClient client = new MongoClient("localhost", 27017);
             MongoDatabase ds = client.getDatabase("ds");
             // 选择 collection
-            MongoCollection<Document> companyCol = ds.getCollection("nl2sql_question");
-            companyCol.insertOne(question);
+            MongoCollection<Document> questionCol = ds.getCollection("nl2sql_question");
+            // 存入之前先删除所有匹配的数据
+            questionCol.deleteMany(Filters.eq("question", question));
+            questionCol.insertOne(question);
             return true;
         } catch (Exception e) {
             log.error("存入mongo问题库发生异常：", e);
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean delQuestion(String question) {
+        try {
+            @Cleanup
+            MongoClient client = new MongoClient("localhost", 27017);
+            MongoDatabase ds = client.getDatabase("ds");
+            // 选择 collection
+            MongoCollection<Document>questionCol = ds.getCollection("nl2sql_question");
+            // 删除所有匹配的数据
+            questionCol.deleteMany(Filters.eq("question", question));
+            return true;
+        } catch (Exception e) {
+            log.error("删除mongo问题库发生异常：", e);
         }
 
         return false;

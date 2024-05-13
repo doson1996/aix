@@ -30,9 +30,21 @@ public interface MongoDao {
     boolean saveCompany(Document company);
 
     /**
+     * 删除公司名
+     * @return
+     */
+    boolean delCompany(String company);
+
+    /**
      * 新增问题
      * @return
      */
     boolean saveQuestion(Document question);
+
+    /**
+     * 删除公司名
+     * @return
+     */
+    boolean delQuestion(String question);
 
 }
