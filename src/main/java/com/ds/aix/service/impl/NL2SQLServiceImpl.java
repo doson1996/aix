@@ -70,7 +70,12 @@ public class NL2SQLServiceImpl implements NL2SQLService {
             }
         }
 
-        return Result.ok("公司：" + company + " 问题：" + qKey);
+        // todo 【都查一遍？】 如果解析出的公司名不是配置的，并且公司名不以解析出的地名开头，将地名加上
+        if (!configCompanyFlag && !company.startsWith(ns) && (!company.contains("(" + ns + ")") || !company.contains("（" + ns + "）"))) {
+            company = ns + company;
+        }
+
+        return Result.okData("公司：" + company + " 问题：" + qKey);
     }
 
     /**
