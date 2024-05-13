@@ -3,10 +3,7 @@ package com.ds.aix.controller;
 import com.ds.aix.common.result.Result;
 import com.ds.aix.service.NL2SQLService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -28,6 +25,18 @@ public class NL2SQLController {
         Result<Object> result = nl2SqlService.ask(question);
         log.info("问题: {}, 返回结果: {}", question, result);
         return result;
+    }
+
+    @GetMapping("add-question")
+    public Result<Object> addQuestion(String question) {
+        nl2SqlService.addQuestion(question);
+        return Result.ok("添加问题成功!");
+    }
+
+    @GetMapping("add-company")
+    public Result<Object> addCompany(String company) {
+        nl2SqlService.addCompany(company);
+        return Result.ok("添加问题成功!");
     }
 
 }

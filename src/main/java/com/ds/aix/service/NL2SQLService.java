@@ -16,4 +16,16 @@ public interface NL2SQLService {
      */
     Result<Object> ask(String question);
 
+    /**
+     * 添加问题
+     * @param question
+     */
+    void addQuestion(String question);
+
+    /**
+     * 添加公司
+     * @param company
+     */
+    void addCompany(String company);
+
 }
