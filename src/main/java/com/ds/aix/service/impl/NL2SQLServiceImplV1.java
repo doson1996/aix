@@ -1,6 +1,6 @@
 package com.ds.aix.service.impl;
 
-import com.ds.aix.common.constant.AixNatureConstant;
+import com.ds.aix.common.constant.AixConstant;
 import com.ds.aix.common.result.Result;
 import com.ds.aix.common.util.StringUtils;
 import com.ds.aix.exception.BusinessException;
@@ -11,7 +11,6 @@ import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.corpus.tag.Nature;
 import com.hankcs.hanlp.seg.common.Term;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -43,14 +42,14 @@ public class NL2SQLServiceImplV1 implements NL2SQLService {
         String ns = "";
         for (Term term : perceptronResult) {
             // 配置的公司名
-            if (Nature.fromString(AixNatureConstant.COMPANY).equals(term.nature)) {
+            if (Nature.fromString(AixConstant.COMPANY).equals(term.nature)) {
                 company = term.word;
                 // 是否解析出配置公司名置为true
                 configCompanyFlag = true;
             }
 
             // 配置的问题
-            if (Nature.fromString(AixNatureConstant.QUESTION).equals(term.nature)) {
+            if (Nature.fromString(AixConstant.QUESTION).equals(term.nature)) {
                 qKey = term.word;
             }
 

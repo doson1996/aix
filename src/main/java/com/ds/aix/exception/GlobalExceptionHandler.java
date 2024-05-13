@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
  */
 @Slf4j
 @ResponseBody
-@ControllerAdvice
+//@ControllerAdvice
 public class GlobalExceptionHandler {
 
     /**

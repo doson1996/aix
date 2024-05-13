@@ -2,6 +2,7 @@ package com.ds.aix.hanlp.corpus.io;
 
 import com.ds.aix.boot.EnvUtils;
 import com.ds.aix.boot.SpringContext;
+import com.ds.aix.common.constant.AixConstant;
 import com.ds.aix.common.util.StringUtils;
 import com.ds.aix.dao.MongoDao;
 import com.hankcs.hanlp.corpus.io.FileIOAdapter;
@@ -63,19 +64,45 @@ public class CustomIOAdapter extends FileIOAdapter {
                 // 只执行一次
                 NEED_INIT.set(false);
                 log.info("读取mongo配置数据");
-                List<Document> list = mongoDao.queryQuestions();
+                List<Document> questions = mongoDao.queryQuestions();
+                List<Document> companys = mongoDao.queryCompanys();
                 File file = new File(CUSTOM_FILE);
                 Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()));
-                for (int i = 0; i < list.size(); i++) {
-                    Document document = list.get(i);
+                for (int i = 0; i < questions.size(); i++) {
+                    Document document = questions.get(i);
                     String question = document.getString("question");
-                    String line = question + " hzq 1";
-                    if (i < list.size() - 1) {
-                        line = line + "\r\n";
+                    StringBuilder line = new StringBuilder(question + AixConstant.QUESTION_CONFIG);
+                    log.info("读到问题配置：" + line);
+                    if (i < questions.size() - 1) {
+                        line.append(AixConstant.LINE_BREAK);
                     }
-                    log.info("读到配置：" + line);
-                    writer.write(line);
+                    writer.write(line.toString());
                 }
+
+                // 读取公司库配置换行
+                if (!companys.isEmpty()) {
+                    writer.write(AixConstant.LINE_BREAK);
+                }
+
+                for (int i = 0; i < companys.size(); i++) {
+                    Document document = companys.get(i);
+                    String company = document.getString("company");
+                    StringBuilder line = new StringBuilder(company + AixConstant.COMPANY_CONFIG);
+
+                    // todo 公司简称
+                    List<String> abbreviationList = document.getList("abbreviation", String.class);
+                    for (String abbreviation : abbreviationList) {
+                       // line.append(AixConstant.LINE_BREAK).append(abbreviation).append(AixConstant.COMPANY_ABBREVIATION_CONFIG);
+                    }
+
+                    log.info("读到公司配置：" + line);
+                    if (i < questions.size() - 1) {
+                        line.append(AixConstant.LINE_BREAK);
+                    }
+
+                    writer.write(line.toString());
+                }
+
                 writer.close();
             }
         } catch (Exception e) {

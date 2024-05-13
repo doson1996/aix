@@ -24,17 +24,39 @@ public class MongoDaoImpl implements MongoDao {
 
     @Override
     public List<Document> queryQuestions() {
-        @Cleanup
-        MongoClient client = new MongoClient("localhost", 27017);
-        MongoDatabase ds = client.getDatabase("ds");
-
-        // 选择 collection
-        MongoCollection<Document> question = ds.getCollection("nl2sql_question");
-
         List<Document> result = new ArrayList<>();
-        FindIterable<Document> documents = question.find();
-        for (Document document : documents) {
-            result.add(document);
+        try {
+            @Cleanup
+            MongoClient client = new MongoClient("localhost", 27017);
+            MongoDatabase ds = client.getDatabase("ds");
+            // 选择 collection
+            MongoCollection<Document> question = ds.getCollection("nl2sql_question");
+            FindIterable<Document> documents = question.find();
+            for (Document document : documents) {
+                result.add(document);
+            }
+        } catch (Exception e) {
+            log.error("查询问题合集发生异常：", e);
+        }
+        
+        return result;
+    }
+
+    @Override
+    public List<Document> queryCompanys() {
+        List<Document> result = new ArrayList<>();
+        try {
+            @Cleanup
+            MongoClient client = new MongoClient("localhost", 27017);
+            MongoDatabase ds = client.getDatabase("ds");
+            // 选择 collection
+            MongoCollection<Document> question = ds.getCollection("nl2sql_company");
+            FindIterable<Document> documents = question.find();
+            for (Document document : documents) {
+                result.add(document);
+            }
+        } catch (Exception e) {
+            log.error("查询公司合集发生异常：", e);
         }
 
         return result;

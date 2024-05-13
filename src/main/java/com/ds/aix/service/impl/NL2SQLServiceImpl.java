@@ -1,6 +1,6 @@
 package com.ds.aix.service.impl;
 
-import com.ds.aix.common.constant.AixNatureConstant;
+import com.ds.aix.common.constant.AixConstant;
 import com.ds.aix.common.result.Result;
 import com.ds.aix.common.util.StringUtils;
 import com.ds.aix.dao.MongoDao;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author ds
@@ -56,14 +57,14 @@ public class NL2SQLServiceImpl implements NL2SQLService {
             String ns = "";
 
             // 配置的公司名
-            if (Nature.fromString(AixNatureConstant.COMPANY).equals(term.nature)) {
+            if (Nature.fromString(AixConstant.COMPANY).equals(term.nature)) {
                 company = term.word;
                 // 是否解析出配置公司名置为true
                 configCompanyFlag = true;
             }
 
             // 配置的问题
-            if (Nature.fromString(AixNatureConstant.QUESTION).equals(term.nature)) {
+            if (Nature.fromString(AixConstant.QUESTION).equals(term.nature)) {
                 questionList.add(term.word);
             }
 
@@ -116,7 +117,7 @@ public class NL2SQLServiceImpl implements NL2SQLService {
         document.put("parseKey", parseKey);
         mongoDao.saveQuestion(document);
 
-        boolean add = CustomDictionary.add(question, AixNatureConstant.QUESTION);
+        boolean add = CustomDictionary.add(question, AixConstant.QUESTION);
         return add ? Result.ok("添加成功!") : Result.ok("添加失败!");
     }
 
@@ -135,14 +136,36 @@ public class NL2SQLServiceImpl implements NL2SQLService {
             return Result.ok("当前公司已在公司库中");
         }
 
+        // 是否需要处理简称
+        abbreviation = dealAbbreviation(company, abbreviation);
+
         // 存入mongo
         Document document = new Document();
         document.put("company", company);
         document.put("abbreviation", abbreviation);
         mongoDao.saveCompany(document);
 
-        boolean add = CustomDictionary.add(company, AixNatureConstant.COMPANY);
+        boolean add = CustomDictionary.add(company, AixConstant.COMPANY);
         return add ? Result.ok("添加成功!") : Result.ok("添加失败!");
+    }
+
+    /**
+     * 处理简称
+     *
+     * @param company
+     * @param abbreviation
+     * @return
+     */
+    private List<String> dealAbbreviation(String company, List<String> abbreviation) {
+        // 优先判断股份有限公司
+        if (company.contains("股份有限公司")) {
+            abbreviation.add(company.replace("股份有限公司", ""));
+        } else if (company.contains("有限公司")) {
+            abbreviation.add(company.replace("有限公司", ""));
+        }
+
+        // 去重返回
+        return abbreviation.stream().distinct().collect(Collectors.toList());
     }
 
     /**

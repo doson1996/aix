@@ -18,6 +18,12 @@ public interface MongoDao {
     List<Document> queryQuestions();
 
     /**
+     * 查询所有nl2sql_company数据
+     * @return
+     */
+    List<Document> queryCompanys();
+
+    /**
      * 新增公司名
      * @return
      */
