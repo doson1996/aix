@@ -1,0 +1,8 @@
+server:
+  port: 9294
+  servlet:
+    context-path: /aix
+
+#开发环境
+env:
+  host: ds.com
