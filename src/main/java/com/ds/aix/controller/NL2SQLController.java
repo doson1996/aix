@@ -4,6 +4,7 @@ import com.ds.aix.common.result.Result;
 import com.ds.aix.io.input.AddCompanyInput;
 import com.ds.aix.io.input.AddQuestionInput;
 import com.ds.aix.service.NL2SQLService;
+import com.hankcs.hanlp.dictionary.CustomDictionary;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +46,13 @@ public class NL2SQLController {
     public Result<Object> addCompany(@RequestBody AddCompanyInput input) {
         Result<Object> result = nl2SqlService.addCompany(input);
         return result;
+    }
+
+    @ApiOperation("重置配置")
+    @GetMapping("reload")
+    public Result<Object> reload() {
+        boolean reload = CustomDictionary.reload();
+        return reload ? Result.ok("重置成功!") : Result.fail("重置失败");
     }
 
 }

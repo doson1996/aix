@@ -22,35 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class CustomIOAdapter extends FileIOAdapter {
 
-    public CustomIOAdapter() {
-
-    }
-
     private final MongoDao mongoDao = SpringContext.getApplicationContext().getBean(MongoDao.class);
-
-    /**
-     * 自定义文件路径
-     */
-    private static String CUSTOM_FILE;
-
-    /**
-     * 默认自定义文件路径
-     */
-    private static final String DEFAULT_CUSTOM_FILE = "D://haizhi//config//data-for-1.7.5//data//dictionary//custom//mongo.txt";
-
-    static {
-        try {
-            String customFile = EnvUtils.getString("aix.custom-file.mongo");
-            log.info("customFile = {}", customFile);
-            if (StringUtils.isNotBlank(customFile)) {
-                CUSTOM_FILE = customFile;
-            }
-        } catch (Exception e) {
-            CUSTOM_FILE = DEFAULT_CUSTOM_FILE;
-            log.error("读取hanlp.properties发生异常：", e);
-        }
-    }
-
 
     /**
      * 是否需要初始化
@@ -65,9 +37,9 @@ public class CustomIOAdapter extends FileIOAdapter {
                 NEED_INIT.set(false);
                 log.info("读取mongo配置数据");
                 List<Document> questions = mongoDao.queryQuestions();
-                List<Document> companys = mongoDao.queryCompanys();
-                File file = new File(CUSTOM_FILE);
-                Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()));
+                String questionFilePath = EnvUtils.getString("aix.custom-file.question");
+                File questionFile = new File(questionFilePath);
+                Writer questionWriter = new OutputStreamWriter(Files.newOutputStream(questionFile.toPath()));
                 for (int i = 0; i < questions.size(); i++) {
                     Document document = questions.get(i);
                     String question = document.getString("question");
@@ -76,14 +48,14 @@ public class CustomIOAdapter extends FileIOAdapter {
                     if (i < questions.size() - 1) {
                         line.append(AixConstant.LINE_BREAK);
                     }
-                    writer.write(line.toString());
+                    questionWriter.write(line.toString());
                 }
+                questionWriter.close();
 
-                // 读取公司库配置换行
-                if (!companys.isEmpty()) {
-                    writer.write(AixConstant.LINE_BREAK);
-                }
-
+                List<Document> companys = mongoDao.queryCompanys();
+                String companyFilePath = EnvUtils.getString("aix.custom-file.company");
+                File companyFile = new File(companyFilePath);
+                Writer companyWriter = new OutputStreamWriter(Files.newOutputStream(companyFile.toPath()));
                 for (int i = 0; i < companys.size(); i++) {
                     Document document = companys.get(i);
                     String company = document.getString("company");
@@ -92,18 +64,16 @@ public class CustomIOAdapter extends FileIOAdapter {
                     // todo 公司简称
                     List<String> abbreviationList = document.getList("abbreviation", String.class);
                     for (String abbreviation : abbreviationList) {
-                       // line.append(AixConstant.LINE_BREAK).append(abbreviation).append(AixConstant.COMPANY_ABBREVIATION_CONFIG);
+                        line.append(AixConstant.LINE_BREAK).append(abbreviation).append(AixConstant.COMPANY_ABBREVIATION_CONFIG);
                     }
 
                     log.info("读到公司配置：" + line);
                     if (i < questions.size() - 1) {
                         line.append(AixConstant.LINE_BREAK);
                     }
-
-                    writer.write(line.toString());
+                    companyWriter.write(line.toString());
                 }
-
-                writer.close();
+                companyWriter.close();
             }
         } catch (Exception e) {
             System.out.println("发生异常: " + e);
