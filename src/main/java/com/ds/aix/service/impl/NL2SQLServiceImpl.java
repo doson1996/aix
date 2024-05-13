@@ -13,6 +13,7 @@ import com.hankcs.hanlp.corpus.tag.Nature;
 import com.hankcs.hanlp.dictionary.CustomDictionary;
 import com.hankcs.hanlp.seg.common.Term;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -109,6 +110,12 @@ public class NL2SQLServiceImpl implements NL2SQLService {
             return Result.ok("当前问题已在问题库中");
         }
 
+        // 存入mongo
+        Document document = new Document();
+        document.put("question", question);
+        document.put("parseKey", parseKey);
+        mongoDao.saveQuestion(document);
+
         boolean add = CustomDictionary.add(question, AixNatureConstant.QUESTION);
         return add ? Result.ok("添加成功!") : Result.ok("添加失败!");
     }
@@ -127,6 +134,12 @@ public class NL2SQLServiceImpl implements NL2SQLService {
         if (CustomDictionary.contains(company)) {
             return Result.ok("当前公司已在公司库中");
         }
+
+        // 存入mongo
+        Document document = new Document();
+        document.put("company", company);
+        document.put("abbreviation", abbreviation);
+        mongoDao.saveCompany(document);
 
         boolean add = CustomDictionary.add(company, AixNatureConstant.COMPANY);
         return add ? Result.ok("添加成功!") : Result.ok("添加失败!");
