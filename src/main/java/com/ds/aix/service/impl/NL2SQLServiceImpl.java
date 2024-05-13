@@ -144,8 +144,6 @@ public class NL2SQLServiceImpl implements NL2SQLService {
     public Result<Object> addCompany(AddCompanyInput input) {
         // 公司名
         String company = input.getCompany();
-        // 简称
-        List<String> abbreviation = input.getAbbreviation();
 
         if (StringUtils.isBlank(company)) {
             throw new IllegalArgumentException("公司名不能为空");
@@ -155,6 +153,8 @@ public class NL2SQLServiceImpl implements NL2SQLService {
             return Result.ok("当前公司已在公司库中");
         }
 
+        // 简称
+        List<String> abbreviation = input.getAbbreviation();
         // 是否需要处理简称
         abbreviation = dealAbbreviation(company, abbreviation);
 
