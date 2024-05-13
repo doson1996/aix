@@ -51,10 +51,14 @@ public class NL2SQLServiceImpl implements NL2SQLService {
         List<String> questionList = new ArrayList<>();
 
         for (Term term : perceptronResult) {
-            // 是否解析出配置公司名
-            boolean configCompanyFlag = false;
             // 解析出的公司名
             String company = "";
+            // 是否解析出配置公司名
+            boolean configCompanyFlag = false;
+            // 解析出的公司简称
+            String abbreviation = "";
+            // 是否解析出配置公司简称
+            boolean configAbbreviationFlag = false;
             // 解析出的地名
             String ns = "";
 
@@ -63,6 +67,16 @@ public class NL2SQLServiceImpl implements NL2SQLService {
                 company = term.word;
                 // 是否解析出配置公司名置为true
                 configCompanyFlag = true;
+            }
+
+            // 配置的公司简称
+            if (Nature.fromString(AixConstant.COMPANY_ABBREVIATION).equals(term.nature)) {
+                // 如果没有解析出配置的公司名，使用解析出的机构名
+                if (!configCompanyFlag) {
+                    abbreviation = term.word;
+                    // 是否解析出配置公司名置为true
+                    configAbbreviationFlag = true;
+                }
             }
 
             // 配置的问题
@@ -89,12 +103,15 @@ public class NL2SQLServiceImpl implements NL2SQLService {
 //            if (!configCompanyFlag && StringUtils.isNotBlank(company) && !company.startsWith(ns)) {
 //                company = ns + company;
 //            }
+            // 如果解析到简称，去mongo查询公司名
+            if (!configCompanyFlag && configAbbreviationFlag) {
+                company = mongoDao.qryCompanyName(abbreviation);
+            }
 
             // 添加到公司名集合
             if (StringUtils.isNotBlank(company)) {
                 companyList.add(company);
             }
-
         }
 
         return Result.okData("公司：" + companyList + " 问题：" + questionList);
@@ -187,7 +204,22 @@ public class NL2SQLServiceImpl implements NL2SQLService {
         }
 
         // 去重返回
-        return abbreviation.stream().distinct().collect(Collectors.toList());
+        return abbreviation.stream().filter(jz -> siftAbbreviation(company, jz)).distinct().collect(Collectors.toList());
+    }
+
+    /**
+     * 处理简称
+     *
+     * @param company
+     * @param abbreviation
+     * @return
+     */
+    private boolean siftAbbreviation(String company, String abbreviation) {
+        boolean used = mongoDao.abbreviationUsed(company, abbreviation);
+        if (used) {
+            log.info("【{}】配置的简称【{}】已被使用", company, abbreviation);
+        }
+        return !used;
     }
 
     /**

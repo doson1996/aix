@@ -38,6 +38,12 @@ public class NL2SQLServiceImplV1 implements NL2SQLService {
         String company = "";
         // 是否解析出配置公司名
         boolean configCompanyFlag = false;
+
+        // 解析出的公司简称
+        String abbreviation = "";
+        // 是否解析出配置公司简称
+        boolean configAbbreviationFlag = false;
+
         // 解析出的问题
         String qKey = "";
         // 解析出的地名
@@ -48,6 +54,16 @@ public class NL2SQLServiceImplV1 implements NL2SQLService {
                 company = term.word;
                 // 是否解析出配置公司名置为true
                 configCompanyFlag = true;
+            }
+
+            // 配置的公司简称
+            if (Nature.fromString(AixConstant.COMPANY_ABBREVIATION).equals(term.nature)) {
+                // 如果没有解析出配置的公司名，使用解析出的机构名
+                if (!configCompanyFlag) {
+                    abbreviation = term.word;
+                    // 是否解析出配置公司名置为true
+                    configAbbreviationFlag = true;
+                }
             }
 
             // 配置的问题
@@ -71,8 +87,11 @@ public class NL2SQLServiceImplV1 implements NL2SQLService {
             }
         }
 
-        // todo 【都查一遍？】 如果解析出的公司名不是配置的，并且公司名不以解析出的地名开头，将地名加上
-        if (!configCompanyFlag && !company.startsWith(ns) && (!company.contains("(" + ns + ")") || !company.contains("（" + ns + "）"))) {
+        // 如果没解析出公司
+        if (!configCompanyFlag && configAbbreviationFlag) {
+            company = abbreviation;
+        } else if (!configCompanyFlag && !company.startsWith(ns) && (!company.contains("(" + ns + ")") || !company.contains("（" + ns + "）"))) {
+            // todo 【都查一遍？】 如果解析出的公司名不是配置的，并且公司名不以解析出的地名开头，将地名加上
             company = ns + company;
         }
 

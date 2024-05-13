@@ -4,6 +4,7 @@ import com.ds.aix.dao.MongoDao;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import lombok.Cleanup;
@@ -128,7 +129,7 @@ public class MongoDaoImpl implements MongoDao {
             MongoClient client = new MongoClient("localhost", 27017);
             MongoDatabase ds = client.getDatabase("ds");
             // 选择 collection
-            MongoCollection<Document>questionCol = ds.getCollection("nl2sql_question");
+            MongoCollection<Document> questionCol = ds.getCollection("nl2sql_question");
             // 删除所有匹配的数据
             questionCol.deleteMany(Filters.eq("question", question));
             return true;
@@ -137,6 +138,50 @@ public class MongoDaoImpl implements MongoDao {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean abbreviationUsed(String company, String abbreviation) {
+        try {
+            @Cleanup
+            MongoClient client = new MongoClient("localhost", 27017);
+            MongoDatabase ds = client.getDatabase("ds");
+            // 选择 collection
+            MongoCollection<Document> questionCol = ds.getCollection("nl2sql_company");
+
+            // 使用了这个简称并且公司名不等于company的数据
+            Bson filers = Filters.in("abbreviation", abbreviation);
+            filers = Filters.and(Filters.ne("company", company), filers);
+            long count = questionCol.countDocuments(filers);
+            return count > 0;
+        } catch (Exception e) {
+            log.error("删除mongo问题库发生异常：", e);
+        }
+
+        return false;
+    }
+
+    @Override
+    public String qryCompanyName(String abbreviation) {
+        String companyName = "";
+        try {
+            @Cleanup
+            MongoClient client = new MongoClient("localhost", 27017);
+            MongoDatabase ds = client.getDatabase("ds");
+            // 选择 collection
+            MongoCollection<Document> questionCol = ds.getCollection("nl2sql_company");
+
+            // 使用了这个简称并且公司名不等于company的数据
+            Bson filers = Filters.in("abbreviation", abbreviation);
+            for (Document doc : questionCol.find(filers)) {
+                companyName = doc.getString("company");
+            }
+            return companyName;
+        } catch (Exception e) {
+            log.error("删除mongo问题库发生异常：", e);
+        }
+
+        return companyName;
     }
 
 }
