@@ -35,7 +35,7 @@ public class CustomIOAdapter extends FileIOAdapter {
             if (NEED_INIT.get()) {
                 // 只执行一次
                 NEED_INIT.set(false);
-                log.info("读取mongo配置数据");
+                log.info("开始读取mongo配置数据...");
                 List<Document> questions = mongoDao.queryQuestions();
                 String questionFilePath = EnvUtils.getString("aix.custom-file.question");
                 File questionFile = new File(questionFilePath);
@@ -44,7 +44,7 @@ public class CustomIOAdapter extends FileIOAdapter {
                     Document document = questions.get(i);
                     String question = document.getString("question");
                     StringBuilder line = new StringBuilder(question + AixConstant.QUESTION_CONFIG);
-                    log.info("读到问题配置：" + line);
+                    log.info("读到问题配置：{}", line);
                     if (i < questions.size() - 1) {
                         line.append(AixConstant.LINE_BREAK);
                     }
@@ -67,8 +67,8 @@ public class CustomIOAdapter extends FileIOAdapter {
                         line.append(AixConstant.LINE_BREAK).append(abbreviation).append(AixConstant.COMPANY_ABBREVIATION_CONFIG);
                     }
 
-                    log.info("读到公司配置：" + line);
-                    if (i < questions.size() - 1) {
+                    log.info("读到公司配置：{}", line);
+                    if (i < companys.size() - 1) {
                         line.append(AixConstant.LINE_BREAK);
                     }
                     companyWriter.write(line.toString());
@@ -76,7 +76,7 @@ public class CustomIOAdapter extends FileIOAdapter {
                 companyWriter.close();
             }
         } catch (Exception e) {
-            System.out.println("发生异常: " + e);
+            log.error("读取mongo配置发生异常: ", e);
         }
 
         return super.open(path);
