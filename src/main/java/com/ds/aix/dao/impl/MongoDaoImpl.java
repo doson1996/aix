@@ -41,7 +41,6 @@ public class MongoDaoImpl implements MongoDao {
         } catch (Exception e) {
             log.error("查询问题合集发生异常：", e);
         }
-
         return result;
     }
 
@@ -61,7 +60,6 @@ public class MongoDaoImpl implements MongoDao {
         } catch (Exception e) {
             log.error("查询公司合集发生异常：", e);
         }
-
         return result;
     }
 
@@ -76,12 +74,10 @@ public class MongoDaoImpl implements MongoDao {
             // 存入之前先删除所有匹配的数据
             companyCol.deleteMany(Filters.eq("company", company));
             companyCol.insertOne(company);
-
             return true;
         } catch (Exception e) {
             log.error("存入mongo公司库发生异常：", e);
         }
-
         return false;
     }
 
@@ -99,7 +95,6 @@ public class MongoDaoImpl implements MongoDao {
         } catch (Exception e) {
             log.error("删除mongo公司库发生异常：", e);
         }
-
         return false;
     }
 
@@ -118,7 +113,6 @@ public class MongoDaoImpl implements MongoDao {
         } catch (Exception e) {
             log.error("存入mongo问题库发生异常：", e);
         }
-
         return false;
     }
 
@@ -136,7 +130,6 @@ public class MongoDaoImpl implements MongoDao {
         } catch (Exception e) {
             log.error("删除mongo问题库发生异常：", e);
         }
-
         return false;
     }
 
@@ -148,7 +141,6 @@ public class MongoDaoImpl implements MongoDao {
             MongoDatabase ds = client.getDatabase("ds");
             // 选择 collection
             MongoCollection<Document> questionCol = ds.getCollection("nl2sql_company");
-
             // 使用了这个简称并且公司名不等于company的数据
             Bson filers = Filters.in("abbreviation", abbreviation);
             filers = Filters.and(Filters.ne("company", company), filers);
@@ -157,7 +149,6 @@ public class MongoDaoImpl implements MongoDao {
         } catch (Exception e) {
             log.error("删除mongo问题库发生异常：", e);
         }
-
         return false;
     }
 
@@ -180,7 +171,6 @@ public class MongoDaoImpl implements MongoDao {
         } catch (Exception e) {
             log.error("删除mongo问题库发生异常：", e);
         }
-
         return companyName;
     }
 

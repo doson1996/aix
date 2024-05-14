@@ -20,25 +20,4 @@ public interface NL2SQLService {
      */
     Result<Object> ask(String question);
 
-    /**
-     *  添加问题
-     * @param input 入参
-     * @return
-     */
-    Result<Object> addQuestion(AddQuestionInput input);
-
-    /**
-     * 添加公司
-     * @param input 入参
-     */
-    Result<Object> addCompany(AddCompanyInput input);
-
-    /**
-     *
-     * @param input
-     * @return
-     */
-    Result<Object> delQuestion(DelQuestionInput input);
-
-    Result<Object> delCompany(DelCompanyInput input);
 }
