@@ -27,7 +27,7 @@ public class HanLPController {
 
     @Resource
     private HanLPService hanLpService;
-    
+
     @ApiOperation("添加问题")
     @PostMapping("add-question")
     public Result<Object> addQuestion(@RequestBody AddQuestionInput input) {

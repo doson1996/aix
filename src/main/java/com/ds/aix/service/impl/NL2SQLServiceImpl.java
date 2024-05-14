@@ -77,7 +77,7 @@ public class NL2SQLServiceImpl implements NL2SQLService {
                 questionList.add(term.word);
             }
 
-            // 机构名  todo 设置的简称 优先级不如 nt？ 重庆银行？
+            // 机构名
             if (Nature.nt.equals(term.nature)
                     || Nature.ntc.equals(term.nature)
                     || Nature.ntcb.equals(term.nature)) {

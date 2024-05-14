@@ -14,7 +14,8 @@ import com.ds.aix.io.input.DelQuestionInput;
 public interface HanLPService {
 
     /**
-     *  添加问题
+     * 添加问题
+     *
      * @param input 入参
      * @return
      */
@@ -22,12 +23,14 @@ public interface HanLPService {
 
     /**
      * 添加公司
+     *
      * @param input 入参
      */
     Result<Object> addCompany(AddCompanyInput input);
 
     /**
      * 删除问题
+     *
      * @param input
      * @return
      */
@@ -35,6 +38,7 @@ public interface HanLPService {
 
     /**
      * 删除公司
+     *
      * @param input
      * @return
      */

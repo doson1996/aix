@@ -15,6 +15,7 @@ public interface NL2SQLService {
 
     /**
      * 问答
+     *
      * @param question 问题
      * @return
      */
