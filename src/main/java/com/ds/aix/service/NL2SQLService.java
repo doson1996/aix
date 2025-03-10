@@ -1,10 +1,6 @@
 package com.ds.aix.service;
 
 import com.ds.aix.common.result.Result;
-import com.ds.aix.io.input.AddCompanyInput;
-import com.ds.aix.io.input.AddQuestionInput;
-import com.ds.aix.io.input.DelCompanyInput;
-import com.ds.aix.io.input.DelQuestionInput;
 
 /**
  * @author ds

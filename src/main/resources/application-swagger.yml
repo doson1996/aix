@@ -1,7 +1,7 @@
 # swagger
 spring:
   swagger:
-    enable: true
+    enable: false
     base-package: com.ds
     description: nas-hc
     author: dus
