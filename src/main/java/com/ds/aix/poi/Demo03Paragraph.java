@@ -97,9 +97,6 @@ public class Demo03Paragraph {
         /**
          * 复制源文档的页眉和页脚到目标文档
          */
-        /**
-         * 复制源文档的页眉和页脚到目标文档
-         */
         private void copyHeadersAndFooters(Document sourceDoc, Document targetDoc) {
             for (com.aspose.words.Section sourceSection : sourceDoc.getSections()) {
                 com.aspose.words.Section targetSection = targetDoc.getLastSection();
@@ -138,7 +135,8 @@ public class Demo03Paragraph {
          */
         public void addParagraph(Paragraph paragraph) throws Exception {
             // 处理表格
-            if (paragraph.getParentNode().getNodeType() == NodeType.CELL) {
+            int nodeType = paragraph.getParentNode().getNodeType();
+            if (nodeType == NodeType.CELL) {
                 // 如果段落属于表格，则导入整个表格
                 Node table = paragraph.getAncestor(NodeType.TABLE);
                 if (!isTableAlreadyImported(table)) {
@@ -153,7 +151,7 @@ public class Demo03Paragraph {
                     // 记录已导入的表格
                     importedTables.add(table);
                 }
-            } else {
+            } else if (nodeType != NodeType.COMMENT) {  // 如果段落不属于表格且不是评论，则导入段落
                 // 否则只导入段落
                 Node importedNode = currentDoc.importNode(paragraph, true);
                 // 将段落插入到目标文档的主体部分
