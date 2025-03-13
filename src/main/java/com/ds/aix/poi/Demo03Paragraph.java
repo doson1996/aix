@@ -8,6 +8,7 @@ import com.aspose.words.AutoFitBehavior;
 import com.aspose.words.Body;
 import com.aspose.words.Document;
 import com.aspose.words.DocumentBuilder;
+import com.aspose.words.HeaderFooterType;
 import com.aspose.words.Node;
 import com.aspose.words.NodeType;
 import com.aspose.words.Paragraph;
@@ -26,7 +27,7 @@ public class Demo03Paragraph {
         Document doc = new Document(inputFilePath);
 
         // 初始化拆分工具
-        DocumentPartSaver saver = new DocumentPartSaver();
+        DocumentPartSaver saver = new DocumentPartSaver(doc);
 
         int i = 0;
         // 遍历文档中的段落
@@ -63,13 +64,17 @@ public class Demo03Paragraph {
      * 用于保存文档部分的工具类
      */
     private static class DocumentPartSaver {
+        // 保存原始文档的引用
+        private Document sourceDoc;
         private Document currentDoc;
         private DocumentBuilder builder;
         private int partNumber = 1;
         private Set<Node> importedTables = new HashSet<>();
 
 
-        public DocumentPartSaver() throws Exception {
+        public DocumentPartSaver(Document sourceDoc) throws Exception {
+            // 保存原始文档的引用
+            this.sourceDoc = sourceDoc;
             startNewPart();
         }
 
@@ -83,6 +88,48 @@ public class Demo03Paragraph {
             // 移除默认的空白段落
             if (currentDoc.getFirstSection().getBody().getParagraphs().getCount() > 0) {
                 currentDoc.getFirstSection().getBody().getParagraphs().removeAt(0);
+            }
+
+            // 复制源文档的页眉和页脚设置
+            copyHeadersAndFooters(sourceDoc, currentDoc);
+        }
+
+        /**
+         * 复制源文档的页眉和页脚到目标文档
+         */
+        /**
+         * 复制源文档的页眉和页脚到目标文档
+         */
+        private void copyHeadersAndFooters(Document sourceDoc, Document targetDoc) {
+            for (com.aspose.words.Section sourceSection : sourceDoc.getSections()) {
+                com.aspose.words.Section targetSection = targetDoc.getLastSection();
+
+                // 确保目标部分已初始化页眉页脚集合
+                if (targetSection.getHeadersFooters().getCount() == 0) {
+                    targetSection.appendChild(new com.aspose.words.HeaderFooter(targetDoc, HeaderFooterType.HEADER_PRIMARY));
+                }
+
+                for (com.aspose.words.HeaderFooter headerFooter : sourceSection.getHeadersFooters()) {
+                    // 导入页眉页脚节点
+                    Node importedHeaderFooter = targetDoc.importNode(headerFooter, true);
+
+                    // 获取目标部分中对应的页眉页脚类型
+                    int hfType = headerFooter.getHeaderFooterType();
+                    com.aspose.words.HeaderFooter targetHeaderFooter = targetSection.getHeadersFooters().getByHeaderFooterType(hfType);
+
+                    if (targetHeaderFooter == null) {
+                        // 如果目标部分中不存在对应类型的页眉页脚，则添加
+                        targetSection.getHeadersFooters().add((com.aspose.words.HeaderFooter) importedHeaderFooter);
+                    } else {
+                        // 如果存在，则替换内容
+                        targetHeaderFooter.getChildNodes().clear();
+                        // 使用 iterator 遍历子节点
+                        for (Node childNode : ((com.aspose.words.HeaderFooter) importedHeaderFooter).getChildNodes().toArray()) {
+                            Node clonedChild = targetDoc.importNode(childNode, true);
+                            targetHeaderFooter.appendChild(clonedChild);
+                        }
+                    }
+                }
             }
         }
 
